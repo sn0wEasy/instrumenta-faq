@@ -6,10 +6,6 @@ export const runtime = 'edge';
 // ----- initialize -----
 const APP_URL = process.env.APP_URL || '';
 
-export async function GET(): Promise<NextResponse> {
-    return NextResponse.json({ message: 'GET request' });
-}
-
 export async function POST(request: NextRequest): Promise<NextResponse> {
     try {
         const { message } = await request.json();

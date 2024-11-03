@@ -1,5 +1,3 @@
-import fs from "fs";
-import path from 'path';
 import {
     Document,
     VectorStoreIndex,
@@ -11,19 +9,17 @@ import {
     RetrieverQueryEngine
 } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
+import { constants } from "@/constants";
 
+// ----- runtime -----
 export const runtime = 'edge';
+
 // ----- initialize -----
 let queryEngine: RetrieverQueryEngine;
 
 const initializationPromise = (async () => {
-    function loadDataFromFile(filename: string): string {
-        const filePath = path.join(process.cwd(), 'data', filename);
-        return fs.readFileSync(filePath, 'utf-8');
-    }
-    const knowledgeBase = loadDataFromFile('knowledge_base.txt');
 
-    const document = new Document({ text: knowledgeBase });
+    const document = new Document({ text: constants.knowledgeBase });
 
     Settings.llm = new Gemini({
         model: GEMINI_MODEL.GEMINI_PRO_1_5_FLASH_LATEST,

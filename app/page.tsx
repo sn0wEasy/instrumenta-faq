@@ -83,7 +83,7 @@ export default function ChatInterface() {
                     <AvatarFallback>{message.role === 'user' ? 'U' : 'AI'}</AvatarFallback>
                   </Avatar>
                   <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                    {message.content.split('\n').map((line, index) => (
+                    {message.content?.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line.split('**').map((part, i) => (
                           <React.Fragment key={i}>

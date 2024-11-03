@@ -38,7 +38,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         // モデルの応答をチャット履歴に追加
         chatHistory.push({ role: 'model', parts: [{ text: response }] });
 
-        return NextResponse.json({ response: response });
+        return NextResponse.json({ response });
     } catch (error) {
         console.error('Error:', error);
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

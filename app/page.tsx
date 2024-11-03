@@ -41,7 +41,6 @@ export default function ChatInterface() {
 
       const data = await response.json();
       const assistantMessage: Message = { role: 'assistant', content: data.response };
-      console.log(assistantMessage);
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);

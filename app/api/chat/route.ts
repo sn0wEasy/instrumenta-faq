@@ -1,7 +1,7 @@
 import { constants } from '@/constants';
 import { NextRequest, NextResponse } from 'next/server';
 
-export async function GET(request: NextRequest): Promise<NextResponse> {
+export async function GET(): Promise<NextResponse> {
     return NextResponse.json({ message: 'GET request' });
 }
 

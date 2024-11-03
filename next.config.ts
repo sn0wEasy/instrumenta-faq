@@ -1,5 +1,8 @@
 import withLlamaIndex from "llamaindex/next";
+import type { NextConfig } from "next";
 
-export default withLlamaIndex({
-  // your next.js config
-});
+const nextConfig: NextConfig = {
+  /* config options here */
+};
+
+export default withLlamaIndex(nextConfig);

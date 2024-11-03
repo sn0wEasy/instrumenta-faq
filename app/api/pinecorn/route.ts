@@ -9,6 +9,7 @@ import {
     GEMINI_MODEL,
     GEMINI_EMBEDDING_MODEL,
 } from "llamaindex";
+import { NextRequest, NextResponse } from "next/server";
 
 // ----- load -----
 // テキストファイルからデータを読み込む関数
@@ -18,10 +19,10 @@ function loadDataFromFile(filename: string): string {
 }
 
 // テキストファイルからデータを読み込み
-const data = loadDataFromFile('knowledge_base.txt');
+const knowledgeBase = loadDataFromFile('knowledge_base.txt');
 
 // ----- llamaindex -----
-const document = new Document({ text: data });
+const document = new Document({ text: knowledgeBase });
 
 Settings.llm = new Gemini({
     model: GEMINI_MODEL.GEMINI_PRO_1_5_FLASH_LATEST,
@@ -40,10 +41,14 @@ const index = await VectorStoreIndex.fromDocuments(
 const retriever = index.asRetriever({ similarityTopK: 1 });  // チャンク取得数
 const queryEngine = index.asQueryEngine({ retriever: retriever });
 
-// 質問応答
-const response = await queryEngine.query({
-    query: "横一列に並んでいるオブジェクトをまとめてグループ化する機能はある？",
-});
 
-// 出力の確認
-console.log(response.toString());
+export async function POST(request: NextRequest): Promise<NextResponse> {
+    const { message } = await request.json();
+
+    // 質問応答
+    const response = await queryEngine.query({
+        query: message,
+    });
+
+    return NextResponse.json({ response: response.toString() });
+}

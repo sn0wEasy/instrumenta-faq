@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -44,7 +44,6 @@ export default function ChatInterface() {
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error:', error);
-      // エラーメッセージを表示するなどのエラーハンドリングを行う
     } finally {
       setIsLoading(false);
     }
@@ -69,7 +68,16 @@ export default function ChatInterface() {
                   <AvatarFallback>{message.role === 'user' ? 'U' : 'AI'}</AvatarFallback>
                 </Avatar>
                 <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                  {message.content}
+                  {message.content.split('\n').map((line, index) => (
+                    <React.Fragment key={index}>
+                      {line.split('**').map((part, i) => (
+                        <React.Fragment key={i}>
+                          {i % 2 === 1 ? <strong>{part}</strong> : part}
+                        </React.Fragment>
+                      ))}
+                      <br />
+                    </React.Fragment>
+                  ))}
                 </div>
               </div>
             </div>

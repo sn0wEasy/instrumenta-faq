@@ -1,6 +1,8 @@
 import { Content, GenerativeModel, GoogleGenerativeAI } from '@google/generative-ai';
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'edge';
+
 // ----- initialize -----
 const APP_URL = process.env.APP_URL || '';
 

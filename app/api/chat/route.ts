@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 
+export const runtime = 'edge';
 const APP_URL = process.env.APP_URL || '';
 
 export async function GET(): Promise<NextResponse> {

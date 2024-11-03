@@ -12,6 +12,7 @@ import {
 } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
 
+export const runtime = 'edge';
 // ----- initialize -----
 let queryEngine: RetrieverQueryEngine;
 

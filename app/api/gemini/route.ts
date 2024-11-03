@@ -32,7 +32,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const { message } = await request.json();
 
         // pinecornからデータを読み込む
-        const queryedResponse = await fetch(constants.API_URL + '/pinecorn', {
+        const queryedResponse = await fetch(constants.API_URL + '/llamaindex', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message }),

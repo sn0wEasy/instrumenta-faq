@@ -7,12 +7,13 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, User } from 'lucide-react';
-import { constants } from '@/constants';
 
 type Message = {
   role: 'user' | 'assistant';
   content: string;
 };
+
+const APP_URL = process.env.APP_URL || '';
 
 export default function ChatInterface() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -42,7 +43,7 @@ export default function ChatInterface() {
     setIsLoading(true);
 
     try {
-      const response = await fetch(constants.API_URL + '/chat', {
+      const response = await fetch(APP_URL + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ message: input }),

@@ -12,8 +12,6 @@ import {
 } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
 
-
-
 // ----- initialize -----
 let queryEngine: RetrieverQueryEngine;
 

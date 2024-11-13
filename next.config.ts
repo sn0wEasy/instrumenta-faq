@@ -1,4 +1,3 @@
-import withLlamaIndex from "llamaindex/next";
 import { setupDevPlatform } from '@cloudflare/next-on-pages/next-dev';
 import type { NextConfig } from "next";
 
@@ -14,4 +13,4 @@ async function setupDevelopmentEnvironment() {
 
 setupDevelopmentEnvironment();
 
-export default withLlamaIndex(nextConfig);
+export default nextConfig;

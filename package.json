@@ -20,7 +20,6 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.1",
     "dotenv": "^16.4.5",
-    "llamaindex": "^0.8.0",
     "lucide-react": "^0.454.0",
     "next": "15.0.2",
     "react": "^18.3.1",

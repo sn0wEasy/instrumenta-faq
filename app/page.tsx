@@ -62,10 +62,7 @@ export default function ChatInterface() {
       }
 
       const data = await response.json();
-      if (data.response.endsWith('\n')) {
-        data.response = data.response.slice(0, -1);
-      }
-      const modelMessage: Content = { role: 'model', parts: [{ text: data.response }] };
+      const modelMessage: Content = { role: 'model', parts: [{ text: data.response.replace(/\n+$/, '') }] };
       setChatHistory(prev => [...prev, modelMessage]);
     } catch (error) {
       console.error('Error:', error);

@@ -27,6 +27,8 @@ export default function ChatInterface() {
   const [isLoading, setIsLoading] = useState(false);
   // メッセージが追加されたときの処理
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  // 入力欄の参照を作成
+  const inputRef = useRef<HTMLInputElement>(null);
 
   // メッセージが追加されたときの処理
   useEffect(() => {
@@ -40,6 +42,13 @@ export default function ChatInterface() {
       }
     }
   }, [chatHistory]);
+
+  // 特定の条件で入力欄をアクティブにする
+  useEffect(() => {
+    if (!isLoading && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [isLoading]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -121,6 +130,7 @@ export default function ChatInterface() {
               placeholder="メッセージを入力..."
               disabled={isLoading}
               className="flex-grow"
+              ref={inputRef}
             />
             <Button type="submit" disabled={isLoading}>
               <Send className="w-4 h-4 mr-2" />

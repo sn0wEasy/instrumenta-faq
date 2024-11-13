@@ -7,22 +7,30 @@ import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Send, User } from 'lucide-react';
-
-type Message = {
-  role: 'user' | 'assistant';
-  content: string;
-};
+import { Content } from '@google/generative-ai';
+import { constants } from '@/constants';
 
 const APP_URL = process.env.APP_URL || '';
 
 export default function ChatInterface() {
-  const [messages, setMessages] = useState<Message[]>([]);
+  // モデルに与える初期プロンプト。画面には表示しない。
+  const initialHistory: Content[] = [{
+    role: 'user', parts: [{
+      text: constants.initialPrompt + constants.knowledgeBase
+    }]
+  }, { role: 'model', parts: [{ text: '了解しました。この情報を基に会話を進めます。' }] }];
+  // ユーザーとモデルの会話履歴
+  const [chatHistory, setChatHistory] = useState<Content[]>([{ role: 'model', parts: [{ text: 'ツールについてなにか困ってることはありますか？' }] }]);
+  // ユーザーの入力
   const [input, setInput] = useState('');
+  // モデルのレスポンスが返ってくるまでのローディング状態
   const [isLoading, setIsLoading] = useState(false);
+  // メッセージが追加されたときの処理
   const scrollAreaRef = useRef<HTMLDivElement>(null);
 
-  // メッセージが追加されたときに自動スクロール
+  // メッセージが追加されたときの処理
   useEffect(() => {
+    // 自動スクロール
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector('[data-radix-scroll-area-viewport]');
       if (scrollContainer) {
@@ -31,14 +39,14 @@ export default function ChatInterface() {
         }, 100);
       }
     }
-  }, [messages]);
+  }, [chatHistory]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    const userMessage: Message = { role: 'user', content: input };
-    setMessages(prev => [...prev, userMessage]);
+    const userMessage: Content = { role: 'user', parts: [{ text: input }] };
+    setChatHistory(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
@@ -46,7 +54,7 @@ export default function ChatInterface() {
       const response = await fetch(APP_URL + '/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: input }),
+        body: JSON.stringify({ chatHistory: [...initialHistory, ...chatHistory, userMessage] }),
       });
 
       if (!response.ok) {
@@ -54,8 +62,11 @@ export default function ChatInterface() {
       }
 
       const data = await response.json();
-      const assistantMessage: Message = { role: 'assistant', content: data.response };
-      setMessages(prev => [...prev, assistantMessage]);
+      if (data.response.endsWith('\n')) {
+        data.response = data.response.slice(0, -1);
+      }
+      const modelMessage: Content = { role: 'model', parts: [{ text: data.response }] };
+      setChatHistory(prev => [...prev, modelMessage]);
     } catch (error) {
       console.error('Error:', error);
     } finally {
@@ -71,7 +82,7 @@ export default function ChatInterface() {
         </CardHeader>
         <CardContent className="flex-grow overflow-hidden">
           <ScrollArea ref={scrollAreaRef} className="h-full pr-4">
-            {messages.map((message, index) => (
+            {chatHistory.map((message, index) => (
               <div key={index} className={`flex items-start mb-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
                 <div className={`flex ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'} items-start max-w-[80%]`}>
                   <Avatar className="w-8 h-8 mt-0.5 mx-2">
@@ -83,7 +94,7 @@ export default function ChatInterface() {
                     <AvatarFallback>{message.role === 'user' ? 'U' : 'AI'}</AvatarFallback>
                   </Avatar>
                   <div className={`p-3 rounded-lg ${message.role === 'user' ? 'bg-primary text-primary-foreground' : 'bg-muted'}`}>
-                    {message.content?.split('\n').map((line, index) => (
+                    {message.parts[0]?.text?.split('\n').map((line, index) => (
                       <React.Fragment key={index}>
                         {line.split('**').map((part, i) => (
                           <React.Fragment key={i}>

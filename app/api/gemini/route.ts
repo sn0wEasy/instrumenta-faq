@@ -10,22 +10,35 @@ const initializationPromise = async () => {
     }
 
     const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
-    return genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    const modelPro = genAI.getGenerativeModel({ model: 'gemini-1.5-pro' });
+    const modelFlash = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' });
+    return { modelPro, modelFlash };
 };
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
-    try {
-        const model = await initializationPromise();
-        const { chatHistory } = await request.json();
+    const { modelPro, modelFlash } = await initializationPromise();
+    const { chatHistory } = await request.json();
 
-        const geminiResponse = await model.generateContent({
+    // デフォルトはProを使用し、Proが使用できない場合はFlashを使用する
+    try {
+        const geminiResponse = await modelPro.generateContent({
             contents: chatHistory,
         });
         const geminiData = geminiResponse.response.text();
 
         return NextResponse.json({ response: geminiData });
     } catch (error) {
-        console.error('Error:', error);
-        return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        console.error('Error with modelPro:', error);
+        try {
+            const geminiResponse = await modelFlash.generateContent({
+                contents: chatHistory,
+            });
+            const geminiData = geminiResponse.response.text();
+
+            return NextResponse.json({ response: geminiData });
+        } catch (flashError) {
+            console.error('Error with modelFlash:', flashError);
+            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+        }
     }
 }

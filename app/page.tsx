@@ -29,6 +29,8 @@ export default function ChatInterface() {
   const scrollAreaRef = useRef<HTMLDivElement>(null);
   // 入力欄の参照を作成
   const inputRef = useRef<HTMLInputElement>(null);
+  // エラーメッセージの状態
+  const [errorMessage, setErrorMessage] = useState('');
 
   // メッセージが追加されたときの処理
   useEffect(() => {
@@ -54,6 +56,12 @@ export default function ChatInterface() {
     e.preventDefault();
     if (!input.trim()) return;
 
+    if (input.length > 200) {
+      setErrorMessage('200文字以内で入力してください');
+      return;
+    }
+
+    setErrorMessage(''); // エラーメッセージをクリア
     const userMessage: Content = { role: 'user', parts: [{ text: input }] };
     setChatHistory(prev => [...prev, userMessage]);
     setInput('');
@@ -122,21 +130,28 @@ export default function ChatInterface() {
           </ScrollArea>
         </CardContent>
         <CardFooter>
-          <form onSubmit={handleSubmit} className="flex w-full gap-2">
-            <Input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="メッセージを入力..."
-              disabled={isLoading}
-              className="flex-grow"
-              ref={inputRef}
-            />
-            <Button type="submit" disabled={isLoading}>
-              <Send className="w-4 h-4 mr-2" />
-              送信
-            </Button>
-          </form>
+          <div className="flex flex-col w-full">
+            <form onSubmit={handleSubmit} className="flex w-full gap-2">
+              <Input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="メッセージを入力..."
+                disabled={isLoading}
+                className="flex-grow"
+                ref={inputRef}
+              />
+              <Button type="submit" disabled={isLoading}>
+                <Send className="w-4 h-4 mr-2" />
+                送信
+              </Button>
+            </form>
+            {errorMessage && (
+              <div className="text-red-500 mt-2 text-center">
+                {errorMessage}
+              </div>
+            )}
+          </div>
         </CardFooter>
       </Card>
     </div>

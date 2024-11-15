@@ -37,7 +37,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             return NextResponse.json({ response: geminiData });
         } catch (flashError) {
             console.error('Error with modelFlash:', flashError);
-            return NextResponse.json({ response: 'エラーが発生しました。時間をおいてから再度お試しください。' });
+            return NextResponse.json({ response: 'エラーが発生したよ。きっと次の日には復活するはずだから、それまで待っててね。' });
         }
     }
 }

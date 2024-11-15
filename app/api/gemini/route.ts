@@ -28,7 +28,6 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
         return NextResponse.json({ response: geminiData });
     } catch (error) {
-        console.error('Error with modelPro:', error);
         try {
             const geminiResponse = await modelFlash.generateContent({
                 contents: chatHistory,
@@ -38,7 +37,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
             return NextResponse.json({ response: geminiData });
         } catch (flashError) {
             console.error('Error with modelFlash:', flashError);
-            return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });
+            return NextResponse.json({ response: 'エラーが発生しました。時間をおいてから再度お試しください。' });
         }
     }
 }

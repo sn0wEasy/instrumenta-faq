@@ -27,7 +27,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
         const geminiData = geminiResponse.response.text();
 
         return NextResponse.json({ response: geminiData });
-    } catch (error) {
+    } catch (proError) {
         try {
             const geminiResponse = await modelFlash.generateContent({
                 contents: chatHistory,
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
             return NextResponse.json({ response: geminiData });
         } catch (flashError) {
+            console.error('Error with modelPro:', proError);
             console.error('Error with modelFlash:', flashError);
             return NextResponse.json({ response: 'エラーが発生したよ。きっと次の日には復活するはずだから、それまで待っててね。' });
         }
